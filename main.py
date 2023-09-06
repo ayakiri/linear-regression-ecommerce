@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn import metrics
 
 # prepare tools
 df = pd.read_csv("Ecommerce Customers")
@@ -26,5 +28,22 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-print(X_train.columns)
-print(model.coef_)
+# predict sales
+predictions = model.predict(X_test)
+
+# compare predictions and real values
+plt.scatter(y_test, predictions)
+plt.xlabel("Y Test")
+plt.ylabel("Predicted Y values")
+
+# evaluate model
+print('MAE:', metrics.mean_absolute_error(y_test, predictions))
+print('MSE:', metrics.mean_squared_error(y_test, predictions))
+print('RMSE:', np.sqrt(metrics.mean_squared_error(y_test, predictions)))
+
+# analyze work - is it better to focus on developing website or mobile app?
+coefficients = pd.DataFrame(model.coef_, X.columns)
+coefficients.columns = ['Coeffecient']
+print(coefficients)
+
+# customers tend to spend more money on mobile app
